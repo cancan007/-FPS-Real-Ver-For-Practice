@@ -20,6 +20,8 @@ public class FPSController : MonoBehaviour
 
     float minX = -90f, maxX = 90f;   //角度に制限を儲けるための数値
 
+    public Animator animator;   // プレイヤーの動きとボタンを関連付けるための変数を宣言
+
     // Start is called before the first frame update
     void Start()   // void: 戻り値を返さない関数を定義するときに使う
     {
@@ -47,6 +49,27 @@ public class FPSController : MonoBehaviour
         transform.localRotation = characterRot;  // プレイヤー角度更新を反映
 
         UpdateCursorLock();
+
+       // プレイヤーの動作とボタンを関連付けている
+        if (Input.GetMouseButton(0))   // 左マウスボタンで撃つ
+        {
+            animator.SetTrigger("Fire");
+        }
+        if (Input.GetKeyDown(KeyCode.R))  // Rボタンでリロード
+        {
+            animator.SetTrigger("Reload");
+        }
+        if(Mathf.Abs(x) > 0 || Mathf.Abs(z) > 0)  //動いている時に、歩くアニメーションを行う(この行ではBool型であるWalkがfalseのとき)
+        {
+            if (animator.GetBool("Walk"))
+            {
+                animator.SetBool("Walk", true);
+            }
+        }
+        else if (animator.GetBool("Walk"))  // 一つ上の条件が当てはまらないときにこれが実効
+        {
+            animator.SetBool("Walk", false);  // 動いていないのにtrueはおかしいので、アニメーションをfalseにする
+        }
     }
 
     private void FixedUpdate()  //0.02秒ごとに行う
