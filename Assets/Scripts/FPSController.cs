@@ -59,9 +59,11 @@ public class FPSController : MonoBehaviour
         {
             animator.SetTrigger("Reload");
         }
+
+        // Walkを設定
         if(Mathf.Abs(x) > 0 || Mathf.Abs(z) > 0)  //動いている時に、歩くアニメーションを行う(この行ではBool型であるWalkがfalseのとき)
-        {
-            if (animator.GetBool("Walk"))
+        {               // ||: or演算子
+            if (!animator.GetBool("Walk"))
             {
                 animator.SetBool("Walk", true);
             }
@@ -69,6 +71,21 @@ public class FPSController : MonoBehaviour
         else if (animator.GetBool("Walk"))  // 一つ上の条件が当てはまらないときにこれが実効
         {
             animator.SetBool("Walk", false);  // 動いていないのにtrueはおかしいので、アニメーションをfalseにする
+        }
+
+        // Runを設定
+        if(z>0 && Input.GetKey(KeyCode.LeftShift))  // zは;で前、-で後ろなので、後ろ向きで走れなくしたいから絶対値はつけない
+        {    // &&: AND演算子      左のシフトボタンを押している間(GetKey:押している間, GetKeyDown:一回押したら)実行
+            if (!animator.GetBool("Run"))
+            {
+                animator.SetBool("Run", true);
+                speed = 0.25f;
+            }
+        }
+        else if(animator.GetBool("Run"))
+        {
+            animator.SetBool("Run", false);
+            speed = 0.1f;
         }
     }
 
