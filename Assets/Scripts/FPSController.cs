@@ -22,6 +22,9 @@ public class FPSController : MonoBehaviour
 
     public Animator animator;   // プレイヤーの動きとボタンを関連付けるための変数を宣言
 
+    // マガジンの弾の数を宣言
+    int ammunition = 50, maxAmmunition = 50, ammoClip = 10, maxAmmoClip = 10;   //ammunition:弾薬の数、 ammoClip:弾倉内の弾の数
+
     // Start is called before the first frame update
     void Start()   // void: 戻り値を返さない関数を定義するときに使う
     {
@@ -54,12 +57,33 @@ public class FPSController : MonoBehaviour
        // プレイヤーの動作とボタンを関連付けている
         if (Input.GetMouseButton(0) && GameState.canShoot)   // 左マウスボタンで撃つ(GameStateファイルから変数を呼んでいる)
         {
-            animator.SetTrigger("Fire");
-            GameState.canShoot = false;   // 連続でfireのモーションが実行されるのを防ぐ
+            if(ammoClip > 0)  // 弾倉内に弾があるとき実行
+            {
+                animator.SetTrigger("Fire");
+                GameState.canShoot = false;   // 連続でfireのモーションが実行されるのを防ぐ
+
+                ammoClip--;  // --: 1を引く
+            }
+            else    // 弾倉内の弾が0のとき
+            {
+                Debug.Log("No Ammunition in Magazine");   //Debugに表示
+            }
+            
         }
         if (Input.GetKeyDown(KeyCode.R))  // Rボタンでリロード
         {
-            animator.SetTrigger("Reload");
+            int amountNeed = maxAmmoClip - ammoClip;
+            int ammoAvailable = amountNeed < ammunition ? amountNeed : ammunition;
+            // amountNeedとammunitionを比べて、true(ammunitionのほうが大きいとき)であれば、amountNeedを代入し、falseであればammunitionを代入
+        
+            if(amountNeed != 0 && ammunition != 0)   // 弾倉内が満タンじゃないときと弾がつきていない時に実行
+            {
+                animator.SetTrigger("Reload");
+
+                ammunition -= ammoAvailable;   // 弾の総数から補充分を引く
+                ammoClip += ammoAvailable;   // 弾倉に弾を補充
+            }
+            
         }
 
         // Walkを設定
