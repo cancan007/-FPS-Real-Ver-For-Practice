@@ -26,8 +26,9 @@ public class FPSController : MonoBehaviour
     void Start()   // void: 戻り値を返さない関数を定義するときに使う
     {
         cameraRot = cam.transform.localRotation;  // 初めに作成しておきたいので、Start内に
-        characterRot = transform.localRotation;  
-        
+        characterRot = transform.localRotation;
+
+        GameState.canShoot = true;
     }
 
     // Update is called once per frame
@@ -51,9 +52,10 @@ public class FPSController : MonoBehaviour
         UpdateCursorLock();
 
        // プレイヤーの動作とボタンを関連付けている
-        if (Input.GetMouseButton(0))   // 左マウスボタンで撃つ
+        if (Input.GetMouseButton(0) && GameState.canShoot)   // 左マウスボタンで撃つ(GameStateファイルから変数を呼んでいる)
         {
             animator.SetTrigger("Fire");
+            GameState.canShoot = false;   // 連続でfireのモーションが実行されるのを防ぐ
         }
         if (Input.GetKeyDown(KeyCode.R))  // Rボタンでリロード
         {
