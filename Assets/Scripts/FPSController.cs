@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;   //Unity上でUIを扱うため
 
 // 参考URL: https://youtu.be/hFyKH5jh6UQ
 
@@ -25,6 +26,10 @@ public class FPSController : MonoBehaviour
     // マガジンの弾の数を宣言
     int ammunition = 50, maxAmmunition = 50, ammoClip = 10, maxAmmoClip = 10;   //ammunition:弾薬の数、 ammoClip:弾倉内の弾の数
 
+
+    int playerHP = 100, maxPlayerHP = 100;
+    public Slider hpber;  //UIのスライダー上のSlider型HPバーに関連して宣言
+    public Text ammoText;  //UIのスライダー上のText型に関連して宣言
     // Start is called before the first frame update
     void Start()   // void: 戻り値を返さない関数を定義するときに使う
     {
@@ -32,6 +37,9 @@ public class FPSController : MonoBehaviour
         characterRot = transform.localRotation;
 
         GameState.canShoot = true;
+
+        hpber.value = playerHP;  // UI上のHPバーのvalueに値を代入
+        ammoText.text = ammoClip + "/" + ammunition;  // UI上のTextに右辺の文字や値を反映
     }
 
     // Update is called once per frame
@@ -63,6 +71,7 @@ public class FPSController : MonoBehaviour
                 GameState.canShoot = false;   // 連続でfireのモーションが実行されるのを防ぐ
 
                 ammoClip--;  // --: 1を引く
+                ammoText.text = ammoClip + "/" + ammunition; //UIに弾数の変化を反映
             }
             else    // 弾倉内の弾が0のとき
             {
@@ -82,6 +91,7 @@ public class FPSController : MonoBehaviour
 
                 ammunition -= ammoAvailable;   // 弾の総数から補充分を引く
                 ammoClip += ammoAvailable;   // 弾倉に弾を補充
+                ammoText.text = ammoClip + "/" + ammunition; //UI上に弾数の変化を反映
             }
             
         }
