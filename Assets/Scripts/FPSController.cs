@@ -30,6 +30,9 @@ public class FPSController : MonoBehaviour
     int playerHP = 100, maxPlayerHP = 100;
     public Slider hpber;  //UIのスライダー上のSlider型HPバーに関連して宣言
     public Text ammoText;  //UIのスライダー上のText型に関連して宣言
+
+    public GameObject mainCamera, subCamera;  // メインカメラとサブカメラ用の変数を宣言
+
     // Start is called before the first frame update
     void Start()   // void: 戻り値を返さない関数を定義するときに使う
     {
@@ -122,6 +125,18 @@ public class FPSController : MonoBehaviour
         {
             animator.SetBool("Run", false);
             speed = 0.1f;
+        }
+
+        // 覗き込みモーションを設定
+        if (Input.GetMouseButton(1))  //右マウスを押している間
+        {
+            subCamera.SetActive(true);   // subCameraを表示
+            mainCamera.GetComponent<Camera>().enabled = false;  // mainCameraすべてをoffにするとすべて消えてしまうので、構成要素の一つであるcamera部分を選択し、そこを部分的にfalseにする
+        }
+        else if (subCamera.activeSelf)  // 右マウスを押していない状態でsubCameraがtrueになっているとき
+        {
+            subCamera.SetActive(false);
+            mainCamera.GetComponent<Camera>().enabled = true;  // mainCameraに表示を戻す
         }
     }
 
