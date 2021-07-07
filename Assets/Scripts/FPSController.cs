@@ -33,6 +33,10 @@ public class FPSController : MonoBehaviour
 
     public GameObject mainCamera, subCamera;  // メインカメラとサブカメラ用の変数を宣言
 
+    // スピーカーと音源を宣言
+    public AudioSource playerFootStep;  //スピーカー用の変数を宣言
+    public AudioClip WalkFootStepSE, RunFootStepSE;  // 歩き時、走り時、それぞれの音源用の変数を宣言
+   
     // Start is called before the first frame update
     void Start()   // void: 戻り値を返さない関数を定義するときに使う
     {
@@ -78,7 +82,9 @@ public class FPSController : MonoBehaviour
             }
             else    // 弾倉内の弾が0のとき
             {
-                Debug.Log("No Ammunition in Magazine");   //Debugに表示
+                //Debug.Log("No Ammunition in Magazine");   //Debugに表示
+
+                Weapon.instance.TriggerSE();  // Weapon.cs　の　Weaponクラスからinstanse.関数名 という形で呼んでいる
             }
             
         }
@@ -105,11 +111,15 @@ public class FPSController : MonoBehaviour
             if (!animator.GetBool("Walk"))
             {
                 animator.SetBool("Walk", true);
+
+                PlayerWalkFootStep(WalkFootStepSE);  //歩きサウンドを関数で再生する(引数には、歩き時の音源を与える)
             }
         }
         else if (animator.GetBool("Walk"))  // 一つ上の条件が当てはまらないときにこれが実効
         {
             animator.SetBool("Walk", false);  // 動いていないのにtrueはおかしいので、アニメーションをfalseにする
+
+            StopFootStep();  // 歩きサウンドを止める
         }
 
         // Runを設定
@@ -119,12 +129,16 @@ public class FPSController : MonoBehaviour
             {
                 animator.SetBool("Run", true);
                 speed = 0.25f;
+
+                PlayerRunFootStep(RunFootStepSE);  //走り時のサウンドを関数で再生
             }
         }
         else if(animator.GetBool("Run"))
         {
             animator.SetBool("Run", false);
             speed = 0.1f;
+
+            StopFootStep(); // 走りサウンドを関数で止める
         }
 
         // 覗き込みモーションを設定
@@ -193,5 +207,38 @@ public class FPSController : MonoBehaviour
         q.x = Mathf.Tan(angleX * Mathf.Deg2Rad * 0.5f);
 
         return q;
+    }
+
+    // 歩き時の音の関数を定義
+    public void PlayerWalkFootStep(AudioClip clip)  // 左の引数が右のパラメータに反映されている(呼び出し時に、歩きか走りの音源を引数として代入したものがこれにあたる)
+    {
+        playerFootStep.loop = true;
+
+        playerFootStep.pitch = 1f;   //音の高さを設定
+
+        playerFootStep.clip = clip;  //音源を設定
+
+        playerFootStep.Play();  // 音を再生
+    }
+
+    // 走り時の音の関数を定義
+    public void PlayerRunFootStep(AudioClip clip)
+    {
+        playerFootStep.loop = true;
+
+        playerFootStep.pitch = 1.3f;  //音の高さを設定
+
+        playerFootStep.clip = clip;
+
+        playerFootStep.Play();
+    }
+
+    public void StopFootStep()
+    {
+        playerFootStep.Stop();  // 音の再生を止める
+
+        playerFootStep.loop = false;
+
+        playerFootStep.pitch = 1f;
     }
 }
