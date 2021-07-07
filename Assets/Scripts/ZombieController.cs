@@ -16,11 +16,21 @@ public class ZombieController: MonoBehaviour
     enum STATE {IDLE,WANDER,ATTACK,CHASE,DEAD};
     STATE state = STATE.IDLE;  //初期のSTATEを定義
 
+
+    // プレイヤーオブジェクトとゾンビの走るスピード用の変数を宣言
+    GameObject target;
+    public float runSpeed;
+
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();  //GetComponent: このファイルが設定されているオブジェクトのcomponentから用いたいものを指定して変数に格納
         agent = GetComponent<NavMeshAgent>();
+
+        if(target == null)  // targetに何も格納されていないとき
+        {
+            target = GameObject.FindGameObjectWithTag("Player");  // GameObjectからTagがPlayerのオブジェクト(Unity上で設定)を指定して格納
+        }
     }
 
     // Animationを止めるための関数
@@ -31,6 +41,33 @@ public class ZombieController: MonoBehaviour
         animator.SetBool("Death", false);
         animator.SetBool("Attack", false);
     }
+
+    // ゾンビとプレイヤーの距離を返す関数
+    float DistanceToPlayer()   // 返り値がfloat型の関数
+    {
+        return Vector3.Distance(target.transform.position, transform.position);  // 引数で指定した二つのオブジェクトの座標から距離を出す
+    }
+
+
+    // プレイヤーとの距離が近くなった時にtrueを返す関数
+    bool CanSeePlayer()
+    {
+        if(DistanceToPlayer() < 15)
+        {
+            return true;
+        }
+        return false;  // 距離が十分近くないときはfalseを返す
+    }
+
+    // プレイヤーとの距離が十分離れたときtrueを返す関数
+    bool ForGetPlayer()
+    {
+        if (DistanceToPlayer() > 20)
+        {
+            return true;
+        }
+        return false;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -40,10 +77,14 @@ public class ZombieController: MonoBehaviour
             case STATE.IDLE:  //IDLE状態の時を定義
                 TurnOffTrigger();
 
-                if(Random.Range(0,5000) < 5)  //確率で実行される
+                if (CanSeePlayer())   //プレイヤーが近くにいるとき実行
                 {
-                    state = STATE.WANDER;  // 状態を変更
+                    state = STATE.CHASE;
                 }
+                else if (Random.Range(0, 5000) < 5)  //確率で実行される  (Playerが近くにいなければ)
+                    {
+                        state = STATE.WANDER;  // 状態を変更
+                    }
                 break;
 
             case STATE.WANDER:
@@ -58,7 +99,7 @@ public class ZombieController: MonoBehaviour
                     agent.SetDestination(NextPos);  // 目的地の座標を指定
                     agent.stoppingDistance = 0;   // 目的地にどれだけ近づいたら止まるかを指定
 
-                    TurnOffTrigger();  //リセット
+                    TurnOffTrigger();  //モーションリセット
 
                     agent.speed = walkingSpeed;  // ゾンビのスピードを指定
                     animator.SetBool("Walk", true);  // 歩きモーションを実行
@@ -70,6 +111,28 @@ public class ZombieController: MonoBehaviour
                     state = STATE.IDLE;
                     agent.ResetPath();   // ゾンビの目的地をなしに設定する
                 }
+
+                if (CanSeePlayer())   //プレイヤーが近くにいるとき実行
+                {
+                    state = STATE.CHASE;
+                }
+                break;
+
+            case STATE CHASE:
+                agent.SetDestination(target.transform.position);  // ゾンビの目的地をPlayerの座標に設定
+                agent.stoppingDistance = 3;
+
+                TurnOffTrigger();
+
+                agent.speed = runSpeed;
+                animator.SetBool("Run", true);  //走りモーションを実行
+
+                if (ForGetPlayer())  // Playerがゾンビと十分離れたときに実行
+                {
+                    agent.ResetPath();  // 目的地をなしにする
+                    state = STATE.WANDER;
+                }
+
                 break;
         }
     }

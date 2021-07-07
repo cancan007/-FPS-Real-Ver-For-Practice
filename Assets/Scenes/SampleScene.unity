@@ -260,7 +260,7 @@ PrefabInstance:
     - target: {fileID: 3934771624806428752, guid: 7c3dc06a3aad05f448fede29c2f3c42c,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3934771624806428752, guid: 7c3dc06a3aad05f448fede29c2f3c42c,
         type: 3}
@@ -374,7 +374,7 @@ GameObject:
   - component: {fileID: 430257338}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
