@@ -21,6 +21,9 @@ public class ZombieController: MonoBehaviour
     GameObject target;
     public float runSpeed;
 
+    // ゾンビのアタック時のダメージ用の変数
+    public int attackDamage;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +48,11 @@ public class ZombieController: MonoBehaviour
     // ゾンビとプレイヤーの距離を返す関数
     float DistanceToPlayer()   // 返り値がfloat型の関数
     {
+        // ゲームオーバー後にPlayerを追いかけることがないようにするため
+        if (GameState.GameOver)
+        {
+            return Mathf.Infinity; // 無限を返す
+        }
         return Vector3.Distance(target.transform.position, transform.position);  // 引数で指定した二つのオブジェクトの座標から距離を出す
     }
 
@@ -67,6 +75,15 @@ public class ZombieController: MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    // ダメージ量をPlayerのscriptに渡す(反映させる)
+    public void DamagePlayer()
+    {
+        if(target != null)  //Playerがtargetとなっている時
+        {
+            target.GetComponent<FPSController>().TakeHit(attackDamage);  // FPSControllerクラスのTakeHit関数に、こちらで定義したattackDamage変数を引数として与える
+        }
     }
     // Update is called once per frame
     void Update()
@@ -118,7 +135,16 @@ public class ZombieController: MonoBehaviour
                 }
                 break;
 
-            case STATE CHASE:
+            case STATE.CHASE:
+
+                if (GameState.GameOver)
+                {
+                    TurnOffTrigger();
+                    agent.ResetPath();
+                    state = STATE.WANDER;
+
+                    return;  //これ以上何も実行されないようになる
+                }
                 agent.SetDestination(target.transform.position);  // ゾンビの目的地をPlayerの座標に設定
                 agent.stoppingDistance = 3;
 
@@ -127,10 +153,40 @@ public class ZombieController: MonoBehaviour
                 agent.speed = runSpeed;
                 animator.SetBool("Run", true);  //走りモーションを実行
 
+                // Playerに3より近づいたら実行
+                if (agent.remainingDistance <= agent.stoppingDistance)  // agent.remainingDistance: agentの現在地と目的地までの残りの距離
+                {
+                    state = STATE.ATTACK;
+                }
+
                 if (ForGetPlayer())  // Playerがゾンビと十分離れたときに実行
                 {
                     agent.ResetPath();  // 目的地をなしにする
                     state = STATE.WANDER;
+                }
+
+                break;
+
+            case STATE.ATTACK:
+                if (GameState.GameOver)
+                {
+                    TurnOffTrigger();
+                    agent.ResetPath();
+                    state = STATE.WANDER;
+
+                    return;  //これ以上何も実行されないようになる
+                }
+
+                TurnOffTrigger();
+                animator.SetBool("Attack", true);
+
+                // ゾンビの向きをPlayerの座標方向に向ける
+                transform.LookAt(new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z));
+
+                // playerとの距離が5より遠いとき、CHASE状態にする
+                if(DistanceToPlayer() > agent.stoppingDistance + 2)
+                {
+                    state = STATE.CHASE;
                 }
 
                 break;

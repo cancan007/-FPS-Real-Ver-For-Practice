@@ -241,4 +241,20 @@ public class FPSController : MonoBehaviour
 
         playerFootStep.pitch = 1f;
     }
+
+
+    // 被ダメージ時, PlayerのHPの計算を行い、HPバーのゲージを変える関数
+    public void TakeHit(float damage)
+    {
+        // Mathf.Clamp():値をある範囲内に収めるための関数
+        playerHP =(int) Mathf.Clamp(playerHP - damage, 0, playerHP);  //(調節したい値, 最低値, 最高値)   (int)でfloat型からint型に変換
+
+        hpber.value = playerHP;
+
+        // HPが0になったとき
+        if(hpber.value <= 0 && !GameState.GameOver)
+        {
+            GameState.GameOver = true;
+        }
+    }
 }
