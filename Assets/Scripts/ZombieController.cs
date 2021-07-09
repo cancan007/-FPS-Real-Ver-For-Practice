@@ -92,6 +92,7 @@ public class ZombieController: MonoBehaviour
         TurnOffTrigger();
         animator.SetBool("Death", true);
         state = STATE.DEAD;
+        target.GetComponent<FPSController>().CountZombies();
     }
     // Update is called once per frame
     void Update()

@@ -31,6 +31,9 @@ public class FPSController : MonoBehaviour
     public Slider hpber;  //UIのスライダー上のSlider型HPバーに関連して宣言
     public Text ammoText;  //UIのスライダー上のText型に関連して宣言
 
+    int zombieNum = 0; // ゾンビ撃退数用の変数
+    public Text zombieText; // ゾンビの撃退数を表示
+
     public GameObject mainCamera, subCamera;  // メインカメラとサブカメラ用の変数を宣言
 
     // スピーカーと音源を宣言
@@ -47,6 +50,8 @@ public class FPSController : MonoBehaviour
 
         hpber.value = playerHP;  // UI上のHPバーのvalueに値を代入
         ammoText.text = ammoClip + "/" + ammunition;  // UI上のTextに右辺の文字や値を反映
+
+        zombieText.text = "Zombie: " + zombieNum;
     }
 
     // Update is called once per frame
@@ -56,8 +61,8 @@ public class FPSController : MonoBehaviour
         float yRot = Input.GetAxis("Mouse Y") * Xsensitivity; // xを軸に取った縦方向の回転
 
         cameraRot *= Quaternion.Euler(-yRot, 0, 0);  //(x,y,z) それぞれの角度を設定 (-にしたのは、今回逆だから)
-                     // yに設定しないのは、カメラ方向に基づいて移動するときに、水平方向のみ移動可能にするため
-                 // 水平方向の回転は親オブジェクトであるplayerに対応させて、カメラはⅹを軸にした縦方向の回転縛りにしたい    
+                                                     // yに設定しないのは、カメラ方向に基づいて移動するときに、水平方向のみ移動可能にするため
+                                                     // 水平方向の回転は親オブジェクトであるplayerに対応させて、カメラはⅹを軸にした縦方向の回転縛りにしたい    
 
         characterRot *= Quaternion.Euler(0, xRot, 0);  // 軸を元に回転するので、x座標にyRot. y座標にxRot
                                                        // Playerはyを軸にした水平方向の回転縛りにしたい
@@ -69,10 +74,10 @@ public class FPSController : MonoBehaviour
 
         UpdateCursorLock();
 
-       // プレイヤーの動作とボタンを関連付けている
+        // プレイヤーの動作とボタンを関連付けている
         if (Input.GetMouseButton(0) && GameState.canShoot)   // 左マウスボタンで撃つ(GameStateファイルから変数を呼んでいる)
         {
-            if(ammoClip > 0)  // 弾倉内に弾があるとき実行
+            if (ammoClip > 0)  // 弾倉内に弾があるとき実行
             {
                 animator.SetTrigger("Fire");
                 GameState.canShoot = false;   // 連続でfireのモーションが実行されるのを防ぐ
@@ -86,15 +91,15 @@ public class FPSController : MonoBehaviour
 
                 Weapon.instance.TriggerSE();  // Weapon.cs　の　Weaponクラスからinstanse.関数名 という形で呼んでいる
             }
-            
+
         }
         if (Input.GetKeyDown(KeyCode.R))  // Rボタンでリロード
         {
             int amountNeed = maxAmmoClip - ammoClip;
             int ammoAvailable = amountNeed < ammunition ? amountNeed : ammunition;
             // amountNeedとammunitionを比べて、true(ammunitionのほうが大きいとき)であれば、amountNeedを代入し、falseであればammunitionを代入
-        
-            if(amountNeed != 0 && ammunition != 0)   // 弾倉内が満タンじゃないときと弾がつきていない時に実行
+
+            if (amountNeed != 0 && ammunition != 0)   // 弾倉内が満タンじゃないときと弾がつきていない時に実行
             {
                 animator.SetTrigger("Reload");
 
@@ -102,11 +107,11 @@ public class FPSController : MonoBehaviour
                 ammoClip += ammoAvailable;   // 弾倉に弾を補充
                 ammoText.text = ammoClip + "/" + ammunition; //UI上に弾数の変化を反映
             }
-            
+
         }
 
         // Walkを設定
-        if(Mathf.Abs(x) > 0 || Mathf.Abs(z) > 0)  //動いている時に、歩くアニメーションを行う(この行ではBool型であるWalkがfalseのとき)
+        if (Mathf.Abs(x) > 0 || Mathf.Abs(z) > 0)  //動いている時に、歩くアニメーションを行う(この行ではBool型であるWalkがfalseのとき)
         {               // ||: or演算子
             if (!animator.GetBool("Walk"))
             {
@@ -123,7 +128,7 @@ public class FPSController : MonoBehaviour
         }
 
         // Runを設定
-        if(z>0 && Input.GetKey(KeyCode.LeftShift))  // zは;で前、-で後ろなので、後ろ向きで走れなくしたいから絶対値はつけない
+        if (z > 0 && Input.GetKey(KeyCode.LeftShift))  // zは;で前、-で後ろなので、後ろ向きで走れなくしたいから絶対値はつけない
         {    // &&: AND演算子      左のシフトボタンを押している間(GetKey:押している間, GetKeyDown:一回押したら)実行
             if (!animator.GetBool("Run"))
             {
@@ -133,7 +138,7 @@ public class FPSController : MonoBehaviour
                 PlayerRunFootStep(RunFootStepSE);  //走り時のサウンドを関数で再生
             }
         }
-        else if(animator.GetBool("Run"))
+        else if (animator.GetBool("Run"))
         {
             animator.SetBool("Run", false);
             speed = 0.1f;
@@ -256,5 +261,11 @@ public class FPSController : MonoBehaviour
         {
             GameState.GameOver = true;
         }
+    }
+
+    public void CountZombies()
+    {
+        zombieNum += 1;
+        zombieText.text = "Zombie: " + zombieNum;
     }
 }
