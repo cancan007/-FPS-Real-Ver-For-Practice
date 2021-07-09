@@ -10,6 +10,8 @@ public class Weapon : MonoBehaviour
     public AudioClip reloadingSE, fireSE, triggerSE;  // それぞれの音源の変数を宣言
 
     public static Weapon instance; // instanceをどこでも共有できるようにしている(staticで)
+
+    public Transform shotDirection;  // 弾を発射する位置のオブジェクト用の変数
     // Start is called before the first frame update
 
     // この関数によって、FPSController.csでWeapon.csの関数や変数を呼び出せるようにしている
@@ -29,7 +31,8 @@ public class Weapon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        // 弾の軌道を表示
+        Debug.DrawRay(shotDirection.position, shotDirection.transform.forward * 10, Color.green);
     }
 
     public void CanShoot()   
@@ -56,6 +59,24 @@ public class Weapon : MonoBehaviour
         {
             weapon.clip = triggerSE;
             weapon.Play();
+        }
+    }
+
+    // 当たり判定の弾を飛ばす関数
+    public void Shooting()
+    {
+        RaycastHit hitInfo;  //あたったオブジェクトの情報を格納する変数
+
+        // オブジェクトにあたったとき
+        if (Physics.Raycast(shotDirection.transform.position, shotDirection.transform.forward, out hitInfo, 300))   // Physics.Raycastp(): 弾を飛ばす関数,  引数:(弾の発射座標, 飛ばす方向, あたったオブジェクトの情報を格納する変数, 弾の届く距離)  out: 空の変数でも渡せるようになる
+        {
+            // あたったオブジェクトがZombieControllerコンポーネントを持っていたら実行
+            if(hitInfo.collider.gameObject.GetComponent<ZombieController>() != null)
+            {
+                ZombieController hitZombie = hitInfo.collider.gameObject.GetComponent<ZombieController>();  //弾に当たったゾンビのZombieControllerをhitZombieに格納
+
+                hitZombie.ZombieDeath();  //あたったゾンビのZombieController.csからZombieDeath()関数を実行
+            }
         }
     }
 }

@@ -85,6 +85,14 @@ public class ZombieController: MonoBehaviour
             target.GetComponent<FPSController>().TakeHit(attackDamage);  // FPSControllerクラスのTakeHit関数に、こちらで定義したattackDamage変数を引数として与える
         }
     }
+
+    // ゾンビが死んだときの関数
+    public void ZombieDeath()
+    {
+        TurnOffTrigger();
+        animator.SetBool("Death", true);
+        state = STATE.DEAD;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -189,6 +197,11 @@ public class ZombieController: MonoBehaviour
                     state = STATE.CHASE;
                 }
 
+                break;
+
+            // ゾンビが死んだときの状態
+            case STATE.DEAD:
+                Destroy(agent);  // Destroy: オブジェクト削除
                 break;
         }
     }
