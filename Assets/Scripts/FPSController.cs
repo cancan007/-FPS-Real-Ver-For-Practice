@@ -39,7 +39,10 @@ public class FPSController : MonoBehaviour
     // スピーカーと音源を宣言
     public AudioSource playerFootStep;  //スピーカー用の変数を宣言
     public AudioClip WalkFootStepSE, RunFootStepSE;  // 歩き時、走り時、それぞれの音源用の変数を宣言
-   
+
+    private Rigidbody rb;//  Rigidbodyを使うための変数
+    public float Jumppower;//  ジャンプ力
+
     // Start is called before the first frame update
     void Start()   // void: 戻り値を返さない関数を定義するときに使う
     {
@@ -47,6 +50,8 @@ public class FPSController : MonoBehaviour
         characterRot = transform.localRotation;
 
         GameState.canShoot = true;
+
+        rb = GetComponent<Rigidbody>();//  rbにRigidbodyの値を代入する
 
         hpber.value = playerHP;  // UI上のHPバーのvalueに値を代入
         ammoText.text = ammoClip + "/" + ammunition;  // UI上のTextに右辺の文字や値を反映
@@ -156,6 +161,12 @@ public class FPSController : MonoBehaviour
         {
             subCamera.SetActive(false);
             mainCamera.GetComponent<Camera>().enabled = true;  // mainCameraに表示を戻す
+        }
+
+        // ジャンプを行う
+        if (Input.GetKeyDown(KeyCode.Space))//  もし、スペースキーがおされたなら、  
+        {
+            rb.AddForce(Vector3.up * Jumppower);//  上にJumpPower分力をかける
         }
     }
 
