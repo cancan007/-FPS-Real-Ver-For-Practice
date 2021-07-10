@@ -151,6 +151,13 @@ public class FPSController : MonoBehaviour
             StopFootStep(); // 走りサウンドを関数で止める
         }
 
+        // 座標を取得
+        if (Input.GetMouseButtonUp(2))   //マウスの中ボタンをクリック
+        {
+            Vector3 mousePosition = Input.mousePosition;
+            Debug.Log("MiddleClick:" + mousePosition);
+        }
+
         // 覗き込みモーションを設定
         if (Input.GetMouseButton(1))  //右マウスを押している間
         {
