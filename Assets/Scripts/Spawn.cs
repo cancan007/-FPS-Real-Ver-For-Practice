@@ -42,4 +42,9 @@ public class Spawn : MonoBehaviour
         //    flag = false;
         //}
     }
+
+    public void ObjectDeath()
+    {
+        Destroy(this.gameObject);
+    }
 }

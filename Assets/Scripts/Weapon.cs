@@ -85,6 +85,14 @@ public class Weapon : MonoBehaviour
 
                 hitZombie.ZombieDeath();  //あたったゾンビのZombieController.csからZombieDeath()関数を実行
             }
+
+            //ゾンビ以外のオブジェクト用に作成
+            if (hitInfo.collider.gameObject.GetComponent<Spawn>() != null)
+            {
+                Spawn hitObject = hitInfo.collider.gameObject.GetComponent<Spawn>();
+
+                hitObject.ObjectDeath();
+            }
         }
     }
 }

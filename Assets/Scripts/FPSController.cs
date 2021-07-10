@@ -256,6 +256,7 @@ public class FPSController : MonoBehaviour
         playerFootStep.Play();
     }
 
+
     public void StopFootStep()
     {
         playerFootStep.Stop();  // 音の再生を止める
