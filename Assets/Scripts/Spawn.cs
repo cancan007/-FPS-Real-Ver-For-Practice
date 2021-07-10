@@ -8,16 +8,13 @@ public class Spawn : MonoBehaviour
     public GameObject SpawnPoint;
     public float SpawnRangeX = 1;
     public float SpawnRangeZ = 1;
-    private bool flag1;
-    private bool flag2;
-    public float posY = 0;
+    private bool flag;
     Vector3 pos;
 
     // Start is called before the first frame update
     void Start()
     {
-        flag1 = true;
-        flag2 = false;
+        flag = true;
         pos = SpawnPoint.transform.position;
     }
 
@@ -27,23 +24,21 @@ public class Spawn : MonoBehaviour
         Vector3 PlayerPosition = Player.transform.position;
         Vector3 SpawnPointPosition = SpawnPoint.transform.position;
 
-        if (flag1 && PlayerPosition.x < SpawnPointPosition.x && PlayerPosition.x > SpawnPointPosition.x - SpawnRangeX && PlayerPosition.z < SpawnPointPosition.z + SpawnRangeZ && PlayerPosition.z > SpawnPointPosition.z + 0.2)
-        //if (PlayerPosition.x < SpawnPointPosition.x && PlayerPosition.x > SpawnPointPosition.x - SpawnRangeX && PlayerPosition.z < SpawnPointPosition.z + SpawnRangeZ && PlayerPosition.z > SpawnPointPosition.z + 0.2)
+        if (flag && PlayerPosition.x < SpawnPointPosition.x && PlayerPosition.x > SpawnPointPosition.x - SpawnRangeX && PlayerPosition.z < SpawnPointPosition.z + SpawnRangeZ && PlayerPosition.z > SpawnPointPosition.z + 0.2)
         {
-            //int intValue = Random.Range(0, 10);
-            //if (intValue == 1)
-            //{
-                pos.y = posY;
-                transform.position = pos;
-                //Instantiate(this, SpawnPointPosition, Quaternion.identity);
-                flag1 = false;
-            //}
+            pos.y = 2.0f;
+            transform.position = pos;
+            flag = false;
         }
 
-        //if (flag && PlayerPosition.x < SpawnPointPosition.x && PlayerPosition.x > SpawnPointPosition.x - SpawnRangeX && PlayerPosition.z < SpawnPointPosition.z + SpawnRangeZ && PlayerPosition.z > SpawnPointPosition.z + 0.2)
+        //if (flag && PlayerPosition.x < SpawnPointPosition.x)
         //{
-        //    //Instantiate(複製するGameObject,位置,回転)の順番で記載
-        //    Instantiate(this, SpawnPointPosition, Quaternion.identity);
+        //    for(int i = 0; i < 1; i++)
+        //    {
+        //        yield return new WaitForSeconds(0.5f);
+        //        //Instantiate(複製するGameObject,位置,回転)の順番で記載
+        //        Instantiate(this, SpawnPointPosition, Quaternion.identity);
+        //    }
         //    flag = false;
         //}
     }
