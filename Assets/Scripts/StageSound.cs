@@ -8,7 +8,7 @@ public class StageSound : MonoBehaviour
     public AudioClip stage1, stage2, stage3, stage4;
     public bool soundFlag = false;
     public bool flag = true;
-    public float seconds = 0;
+    public float sec1, sec2, sec3, sec4 = 0;
 
     public GameObject Player;
     // Start is called before the first frame update
@@ -24,25 +24,25 @@ public class StageSound : MonoBehaviour
         {
             MakeSound(stage1);
             flag = false;
-            seconds += Time.deltaTime;
+            sec1 += Time.deltaTime;
         }
-        else if (!flag && seconds > 78)
+        else if (!flag && sec1 > 20)  //77
         {
             StopSound();
-            seconds = 0;
+            sec1 = 0;
             flag = true;
         }
 
-        if(flag && Player.transform.position.z <= 0 && Player.transform.position.z > -45)
+        if(flag && (Player.transform.position.z <= 0 && Player.transform.position.z > -45))
         {
             MakeSound(stage2);
             flag = false;
-            seconds += Time.deltaTime;
+            sec2 += Time.deltaTime;
         }
-        else if (!flag && seconds > 65)
+        else if (!flag && sec2 > 20)  //64
         {
             StopSound();
-            seconds = 0;
+            sec2 = 0;
             flag = true;
             
         }
@@ -51,14 +51,13 @@ public class StageSound : MonoBehaviour
         {
             MakeSound(stage3);
             flag = false;
-            seconds += Time.deltaTime;
+            sec3 += Time.deltaTime;
         }
-        else if (!flag && seconds > 78)
+        else if (!flag && sec3 > 20)  //77
         {
             StopSound();
-            seconds = 0;
+            sec3 = 0;
             flag = true;
-            
         }
 
         //if (flag && (Player.transform.position.x > 20 || Player.transform.position.x < -20))
@@ -95,7 +94,7 @@ public class StageSound : MonoBehaviour
 
         stage.loop = false;
 
-        stage.pitch = 1f;
+        stage.pitch = 1.0f;
 
         soundFlag = false;
     }

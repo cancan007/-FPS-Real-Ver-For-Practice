@@ -14,6 +14,9 @@ public class Chase : MonoBehaviour
     private Vector3 posVector;
     public float distance = 3.0f;
     public float chickenSpeed = 1.0f;
+    public float attackDamage = 2.0f;
+    private bool damageFlag = true;
+    private float seconds = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +48,31 @@ public class Chase : MonoBehaviour
             prevPlayerPos = Player.transform.position;
 
             flag = true;
+        }
+
+        if(damageFlag && (distance > CalcDistance()))
+        {
+            DamagePlayer();
+            damageFlag = false;
+            seconds += Time.deltaTime;
+        }
+        else if(!damageFlag && seconds > 5)
+        {
+            damageFlag = true;
+        }
+    }
+
+    float CalcDistance()
+    {
+        return Vector3.Distance(Player.transform.position, transform.position);
+    }
+
+    // ダメージ量をPlayerのscriptに渡す(反映させる)
+    public void DamagePlayer()
+    {
+        if (Player != null)  //Playerがtargetとなっている時
+        {
+            Player.GetComponent<FPSController>().TakeHit(attackDamage);  // FPSControllerクラスのTakeHit関数に、こちらで定義したattackDamage変数を引数として与える
         }
     }
 }

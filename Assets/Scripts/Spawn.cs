@@ -9,6 +9,7 @@ public class Spawn : MonoBehaviour
     public float SpawnRangeX = 1;
     public float SpawnRangeZ = 1;
     private bool flag;
+    public float posY = 2.0f;
     Vector3 pos;
 
     // Start is called before the first frame update
@@ -26,7 +27,7 @@ public class Spawn : MonoBehaviour
 
         if (flag && PlayerPosition.x < SpawnPointPosition.x && PlayerPosition.x > SpawnPointPosition.x - SpawnRangeX && PlayerPosition.z < SpawnPointPosition.z + SpawnRangeZ && PlayerPosition.z > SpawnPointPosition.z + 0.2)
         {
-            pos.y = 2.0f;
+            pos.y = posY;
             transform.position = pos;
             flag = false;
         }
